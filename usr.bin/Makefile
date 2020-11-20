@@ -1,4 +1,5 @@
-SUBDIRS = $(shell find . -maxdepth 1 -mindepth 1 -type d)
+SUBDIRS += basename
+SUBDIRS += factor
 
 all: $(SUBDIRS)
 

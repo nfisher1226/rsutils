@@ -1,5 +1,6 @@
 BINDIR     ?= $(DESTDIR)$(PREFIX)/bin
-MANDIR     ?= $(DESTDIR)$(PREFIX)/share/man
+DATADIR    ?= $(DESTDIR)$(PREFIX)/share
+MANDIR     ?= $(DATADIR)/share/man
 INSTALLDIRS = $(BINDIR) $(MANDIR)/man1
 VPATH      += src
 VPATH      += man
@@ -18,7 +19,7 @@ install-strip: $(BINDIR)/$(PROGNAME) $(MANDIR)/man1/$(PROGNAME).1
 $(BINDIR)/$(PROGNAME): $(PROGNAME) | $(BINDIR)
 	install -m0755 $< $@
 
-$(MANDIR)/man1/$(PROGNAME).1: factor.1 | $(MANDIR)/man1
+$(MANDIR)/man1/$(PROGNAME).1: $(PROGNAME).1 | $(MANDIR)/man1
 	install -m0644 $< $@
 
 $(INSTALLDIRS):
