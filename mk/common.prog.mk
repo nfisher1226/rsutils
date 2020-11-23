@@ -1,6 +1,6 @@
 BINDIR     ?= $(DESTDIR)$(PREFIX)/bin
 DATADIR    ?= $(DESTDIR)$(PREFIX)/share
-MANDIR     ?= $(DATADIR)/share/man
+MANDIR     ?= $(DATADIR)/man
 INSTALLDIRS = $(BINDIR) $(MANDIR)/man1
 VPATH      += src
 VPATH      += man

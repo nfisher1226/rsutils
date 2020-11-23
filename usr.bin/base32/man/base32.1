@@ -6,7 +6,8 @@
 .Nd base32 encode/decode data and print to standard output
 .Sh SYNOPSIS
 .Nm
-.Op Fl d
+.Op Fl dhiV
+.Op Fl w Ar num
 .Op Ar
 .Sh DESCRIPTION
 .Nm
@@ -17,10 +18,17 @@ the standard output.
 .Bl -tag -width Ds
 .It Fl d, -decode
 Decode the input instead of encoding it.
+.It Fl i, -ignore-space
+ignore whitespace characters when decoding
 .It Fl h, -help
 Display a help message and exit.
 .It Fl V, -version
 Display program version and exit.
+.It Fl w, -wrap Ar num
+Wrap encoded linux after
+[\fI\,num\/\fR]
+characters
+[\fI\,default 76\/\fR]
 .Sh EXIT STATUS
 .Ex -std base32
 .Sh AUTHOR
