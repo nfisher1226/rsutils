@@ -7,7 +7,7 @@ and share this code freely so long as the LICENSE notice is retained.
 ## Building
 Each utility resides inside it's own subdirectory and can be built
 independently. To build a single utility, cd to the corresponding
-subdirectory and issue the standard "make && make install", adjusting
+subdirectory and issue the standard `make && make install`, adjusting
 paths as needed using the following variables:
 * PREFIX: defaults to splitting between / and /usr
 * BINDIR: defaults to $PREFIX/bin and $PREFIX/sbin
@@ -16,7 +16,7 @@ paths as needed using the following variables:
 the standard suite of utilities.
 
 Alternatively, you can build the entire distribution from the top-level
-directory with "make && make install", adjusting paths as above.
+directory with `make && make install`, adjusting paths as above.
 
 Alternative to the alternative, each utility can be built with `cargo
 build`, which is what the Makefiles do internally.
