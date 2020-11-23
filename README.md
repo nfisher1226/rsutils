@@ -17,6 +17,9 @@ the standard suite of utilities.
 
 Alternatively, you can build the entire distribution from the top-level
 directory with "make && make install", adjusting paths as above.
+
+Alternative to the alternative, each utility can be built with `cargo
+build`, which is what the Makefiles do internally.
 ## Why?
 There are a number of implementations of Unix base utilities available,
 and there is already uutils/coreutils as a Rust implementation. This
