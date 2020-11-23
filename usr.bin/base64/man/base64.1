@@ -1,0 +1,34 @@
+.Dd 2020-11-22
+.Dt BASE64 1
+.Os rsUtils
+.Sh NAME
+.Nm base64
+.Nd base64 encode/decode data and print to standard output
+.Sh SYNOPSIS
+.Nm
+.Op Fl d
+.Op Ar
+.Sh DESCRIPTION
+.Nm
+reads from the standard input or from each file argument, and encodes
+or decodes data based on the base64 scheme described in RFC 3548 into
+the standard output.
+.Sh OPTIONS
+.Bl -tag -width Ds
+.It Fl d, -decode
+Decode the input instead of encoding it.
+.It Fl h, -help
+Display a help message and exit.
+.It Fl V, -version
+Display program version and exit.
+.Sh EXIT STATUS
+.Ex -std base64
+.Sh AUTHOR
+Written by the JeanG3nie for HitchHiker Linux.
+.Sh SEE ALSO
+.Xr base32 1
+.Sh HISTORY
+The
+.Nm
+command first appeared in
+.Nx 9 .
