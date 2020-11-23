@@ -7,7 +7,7 @@ fn main() {
     let matches = App::new("base32")
         .version(crate_version!())
         .author("The JeanG3nie <jeang3nie@hitchhiker-linux.org>")
-        .about("base32 encode/decode data and print to standard output")
+        .about("base64 encode/decode data and print to standard output")
         .arg(
             Arg::new("INPUT")
                 .about("The input file to use")
