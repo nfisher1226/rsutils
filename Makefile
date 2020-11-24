@@ -1,4 +1,5 @@
-SUBDIRS = usr.bin
+SUBDIRS += bin
+SUBDIRS += usr.bin
 
 all: $(SUBDIRS)
 

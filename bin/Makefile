@@ -1,4 +1,6 @@
 SUBDIRS += echo
+SUBDIRS += hostname
+SUBDIRS += sleep
 
 all: $(SUBDIRS)
 

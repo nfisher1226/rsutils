@@ -1,0 +1,39 @@
+.Dd 2020-10-30
+.Dt ECHO 1
+.Os rsUtils
+.Sh NAME
+.Nm echo
+.Nd write arguments to standard output
+.Sh SYNOPSIS
+.Nm
+.Op Fl n
+.Op Ar string ...
+.Sh DESCRIPTION
+The
+.Nm
+utility prints all operands to standard output separated by single blank
+(' ') character and followed by a newline ('\en') character.
+.Pp
+.Nm
+accepts only one option:
+.Bl -tag -width flag
+.It Fl n
+Do not print a newline character after the last operand.
+.El
+.Sh EXIT STATUS
+.Ex -std echo
+.Sh AUTHOR
+Written by the JeanG3nie for rsUtils
+.Sh SEE ALSO
+.Xr printf 1
+.Sh STANDARDS
+The
+.Nm
+utility is expected to be
+.St -p1003.2
+compatible.
+.Sh HISTORY
+An
+.Nm
+utility appeared in
+.At v2 .

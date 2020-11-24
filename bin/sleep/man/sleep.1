@@ -1,0 +1,31 @@
+.Dd 2020-11-24
+.Dt SLEEP 1
+.Os rsUtils
+.Sh NAME
+.Nm sleep
+.Nd suspend execution for an interval of time
+.Sh SYNOPSIS
+.Nm sleep
+.Ar seconds
+.Sh DESCRIPTION
+The
+.Nm
+utility
+suspends execution for a minimum of the specified number of
+.Ar seconds .
+This number must be positive.
+.Sh EXIT STATUS
+.Ex -std sleep
+.Sh SEE ALSO
+.Xr at 1
+.Sh STANDARDS
+The
+.Nm
+utility is compliant with the
+.St -p1003.1-2008
+specification.
+.Sh HISTORY
+A
+.Nm
+utility appeared in
+.At v4 .

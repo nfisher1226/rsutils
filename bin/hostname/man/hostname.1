@@ -1,0 +1,36 @@
+.Dd 2020-10-29
+.Dt HOSTNAME 1
+.Os rsUtils
+.Sh NAME
+.Nm hostname
+.Nd set or print the name of current host system
+.Sh SYNOPSIS
+.Nm
+.Op Fl hsV
+.Op Ar name-of-host
+.Sh DESCRIPTION
+.Nm
+prints the name of the current host.
+The super-user can set the host name by supplying an argument.
+.Sh OPTIONS
+.Bl -tag -width flag
+.It Fl h, -help
+prints a help message
+.It Fl s, -strip
+removes any domain information from the printed name.
+.It Fl V, -version
+prints the name and version string of the program
+.El
+.Sh SEE ALSO
+.Xr domainname 1 ,
+.Xr gethostname 3 ,
+.Xr sethostname 3
+.Sh EXIT STATUS
+.Ex -std hostname
+.Sh Author
+Written by the JeanG3nie for rsUtils
+.Sh HISTORY
+The
+.Nm
+utility appeared in
+.Bx 4.2 .
