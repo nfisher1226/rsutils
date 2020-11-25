@@ -3,6 +3,8 @@ SUBDIRS += base64
 SUBDIRS += basename
 SUBDIRS += factor
 SUBDIRS += nproc
+SUBDIRS += rev
+SUBDIRS += yes
 
 all: $(SUBDIRS)
 
