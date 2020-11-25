@@ -1,4 +1,5 @@
 SUBDIRS += echo
+SUBDIRS += head
 SUBDIRS += hostname
 SUBDIRS += sleep
 

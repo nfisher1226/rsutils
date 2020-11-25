@@ -1,0 +1,63 @@
+.Dd 2020-10-06
+.Dt HEAD 1
+.Os rsUtils
+.Sh NAME
+.Nm head
+.Nd display first lines of a file
+.Sh SYNOPSIS
+.Nm
+.Op Fl chqvV
+.Op Fl n Ar count
+[\fI\,FILE1\/\fR]...
+[\fI\,FILE2\/\fR]...
+.Sh DESCRIPTION
+.Nm
+displays the first
+.Ar count
+lines of each of the specified files, or of the standard input if no
+files are specified or file is specified as '-'.
+.Bl -tag -width Ds
+.It Fl c, -bytes
+count bytes instead of lines.
+.It Fl h, -help
+print a usage statement and exit.
+.It Fl n, -lines
+count
+.Ar n
+number of lines (or bytes if
+.Fl c
+is specified). Defaults to 10.
+.It Fl q, quiet
+disable printing a header, even if
+.Fl v
+is specified or more than on
+.Ar FILE.
+.It Fl v, -verbose
+each file is preceded by a header consisting of the string
+.Dq ==> XXX \*[Le]==
+where
+.Dq XXX
+is the name of the file.
+.It Fl V
+Print program name and version info and exit.
+.Sh EXIT STATUS
+.Ex -std head
+.Sh AUTHOR
+Written by the JeanG3nie for HitchHiker Linux.
+.Sh SEE ALSO
+.Xr tail 1
+.Sh HISTORY
+The
+.Nm
+utility appeared in
+.Bx 3.0 .
+It was rewitten and enhanced to include the
+.Fl c ,
+.Fl q ,
+and
+.Fl v
+options for HitchHiker Linux.
+.Sh STANDARDS
+The
+.Nm
+utility is compliant with the IEEE Std 1003.1-2017 standard.

@@ -33,12 +33,12 @@ fn main() -> io::Result<()> {
         let hostname = matches.value_of("NAME").unwrap().to_string();
         let result = hostname::set(hostname);
         match result {
-			Ok(c) => c,
-			Err(m) => {
-				eprintln!("Error: sethostname: {}", m);
-				process::exit(1);
-			}
-		};
+      			Ok(c) => c,
+			      Err(m) => {
+				        eprintln!("Error: sethostname: {}", m);
+				        process::exit(1);
+			      }
+		    };
     }
     Ok(())
 }

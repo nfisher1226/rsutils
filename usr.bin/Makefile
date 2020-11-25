@@ -2,6 +2,7 @@ SUBDIRS += base32
 SUBDIRS += base64
 SUBDIRS += basename
 SUBDIRS += factor
+SUBDIRS += nproc
 
 all: $(SUBDIRS)
 
