@@ -4,30 +4,28 @@ use std::io::prelude::*;
 use std::io::{self, BufReader};
 use textwrap::fill;
 
-fn wrapit_s(line: String, width: usize) {
+fn wrapit_s(line: &str, width: usize) {
     let line = line.replace('\t', "    ");
     println!("{}", fill(line.trim_end(), width));
 }
 
-fn wrapit_b(line: String, width: usize) {
-    let mut index = 0;
-    for b in line.as_bytes() {
+fn wrapit_b(line: &str, width: usize) {
+    for (index, b) in line.as_bytes().iter().enumerate() {
         if index % width == 0 {
-            print!("\n");
+            println!();
         }
         print!("{}", *b as char);
-        index += 1;
     }
 }
 
-fn wrapit(line: String, width: usize) {
+fn wrapit(line: &str, width: usize) {
     let line = line
         .chars()
         .collect::<Vec<char>>()
         .chunks(width)
         .map(|c| c.iter().collect::<String>())
         .collect::<Vec<String>>();
-    for line in line.iter() {
+    for line in &line {
         println!("{}", line);
     }
 }
@@ -36,11 +34,11 @@ fn wrap_stdin(width: usize, words: bool, bytes: bool) {
     let stdin = io::stdin();
     for line in stdin.lock().lines() {
         if words {
-            wrapit_s(line.unwrap(), width);
+            wrapit_s(&line.unwrap(), width);
         } else if bytes {
-            wrapit_b(line.unwrap(), width);
+            wrapit_b(&line.unwrap(), width);
         } else {
-            wrapit(line.unwrap(), width);
+            wrapit(&line.unwrap(), width);
         }
     }
 }
@@ -54,11 +52,11 @@ fn wrap_file(file: String, width: usize, words: bool, bytes: bool) {
     let buf = BufReader::new(buf);
     for line in buf.lines() {
         if words {
-            wrapit_s(line.unwrap(), width);
+            wrapit_s(&line.unwrap(), width);
         } else if bytes {
-            wrapit_b(line.unwrap(), width);
+            wrapit_b(&line.unwrap(), width);
         } else {
-            wrapit(line.unwrap(), width);
+            wrapit(&line.unwrap(), width);
         }
     }
 }
@@ -104,15 +102,15 @@ fn main() -> io::Result<()> {
         words = true;
     }
     if matches.is_present("INPUT") {
-        let files: Vec<_> = matches
-            .values_of("INPUT")
-            .unwrap()
-            .collect();
+        let files: Vec<_> = matches.values_of("INPUT").unwrap().collect();
         for file in files {
             if file == "-" {
                 wrap_stdin(width, words, bytes);
             } else {
                 wrap_file(file.to_string(), width, words, bytes);
+            }
+            if bytes {
+                println!();
             }
         }
     } else {

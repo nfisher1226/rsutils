@@ -26,7 +26,7 @@ $(INSTALLDIRS):
 	install -d $@
 
 clean:
-	rm -rf target/
+	cargo clean
 
 uninstall:
 	rm -rf $(BINDIR)/$(PROGNAME) $(MANDIR)/man1/$(PROGNAME).1

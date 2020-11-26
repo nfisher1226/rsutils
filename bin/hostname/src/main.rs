@@ -22,23 +22,23 @@ fn main() -> io::Result<()> {
     if matches.is_present("STRIP") {
         strip = true;
     }
-    if !matches.is_present("NAME") {
-        let hostname = hostname::get()?;
-        if strip {
-            println!("{}", hostname.to_string_lossy().split(".").next().unwrap());
-        } else {
-            println!("{}", hostname.to_string_lossy());
-        }
-    } else {
+    if matches.is_present("NAME") {
         let hostname = matches.value_of("NAME").unwrap().to_string();
         let result = hostname::set(hostname);
         match result {
-      			Ok(c) => c,
-			      Err(m) => {
-				        eprintln!("Error: sethostname: {}", m);
-				        process::exit(1);
-			      }
-		    };
+            Ok(c) => c,
+            Err(m) => {
+                eprintln!("Error: sethostname: {}", m);
+                process::exit(1);
+            }
+        };
+    } else {
+        let hostname = hostname::get()?;
+        if strip {
+            println!("{}", hostname.to_string_lossy().split('.').next().unwrap());
+        } else {
+            println!("{}", hostname.to_string_lossy());
+        }
     }
     Ok(())
 }

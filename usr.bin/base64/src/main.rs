@@ -19,20 +19,20 @@ fn main() {
                 .short('d')
                 .long("decode"),
         )
-		.arg(
-			Arg::new("IGNORE")
-				.about("Ignore whitespace when decoding")
-				.short('i')
-				.long("ignore-space")
-		)
         .arg(
-			Arg::new("WRAP")
-				.about("Wrap encoded lines after n characters")
-				.short('w')
-				.long("wrap")
-				.default_value("76")
-				.takes_value(true),
-		)
+            Arg::new("IGNORE")
+                .about("Ignore whitespace when decoding")
+                .short('i')
+                .long("ignore-space"),
+        )
+        .arg(
+            Arg::new("WRAP")
+                .about("Wrap encoded lines after n characters")
+                .short('w')
+                .long("wrap")
+                .default_value("76")
+                .takes_value(true),
+        )
         .get_matches();
     let wrap: usize = matches.value_of_t("WRAP").unwrap();
     let mut contents = String::new();
@@ -44,10 +44,10 @@ fn main() {
     }
     if matches.is_present("DECODE") {
         if matches.is_present("IGNORE") {
-			contents.retain(|c| !c.is_whitespace());
-		} else {
-			contents = contents.replace('\n', "");
-		}
+            contents.retain(|c| !c.is_whitespace());
+        } else {
+            contents = contents.replace('\n', "");
+        }
         let decoded = &decode(contents).unwrap();
         let output = String::from_utf8(decoded.to_vec()).unwrap();
         println!("{}", output.trim_end());
@@ -56,10 +56,9 @@ fn main() {
             .chars()
             .collect::<Vec<char>>()
             .chunks(wrap)
-            .map(|c| c.iter()
-            .collect::<String>())
+            .map(|c| c.iter().collect::<String>())
             .collect::<Vec<String>>();
-        for line in encoded.iter() {
+        for line in &encoded {
             println!("{}", line);
         }
     }

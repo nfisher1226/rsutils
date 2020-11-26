@@ -1,12 +1,9 @@
 use clap::{crate_version, App, Arg};
-use std::{fs, process};
 use std::path::PathBuf;
+use std::{fs, process};
 
 fn printpath(path: PathBuf, newline: bool) {
-    let path = path
-        .into_os_string()
-        .into_string()
-        .unwrap();
+    let path = path.into_os_string().into_string().unwrap();
     if newline {
         println!("{}", path);
     } else {
@@ -42,10 +39,7 @@ fn main() {
         newline = false;
     }
     if matches.is_present("PATH") {
-        let paths: Vec<_> = matches
-            .values_of("PATH")
-            .unwrap()
-            .collect();
+        let paths: Vec<_> = matches.values_of("PATH").unwrap().collect();
         if paths.len() > 1 {
             if !newline {
                 eprintln!("readlink: ignoring -n with multiple arguments");
@@ -70,7 +64,7 @@ fn main() {
                     Err(m) => {
                         eprintln!("Error: {}", m);
                         process::exit(1);
-                    },
+                    }
                 };
                 printpath(path, newline);
             }

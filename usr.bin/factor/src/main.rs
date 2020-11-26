@@ -4,7 +4,7 @@ use std::env;
 use std::io::{self, BufRead};
 use std::process;
 
-fn factor_it(value: String) -> i32 {
+fn factor_it(value: &str) -> i32 {
     let value: u64 = match value.trim().parse() {
         Ok(num) => num,
         Err(c) => {
@@ -14,7 +14,7 @@ fn factor_it(value: String) -> i32 {
     };
     print!("{}:", value);
     let factors = factors(value);
-    for factor in factors.iter() {
+    for factor in &factors {
         print!(" {}", factor);
     }
     println!();
@@ -23,7 +23,7 @@ fn factor_it(value: String) -> i32 {
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    let progname = args[0].split("/").last().unwrap();
+    let progname = args[0].split('/').last().unwrap();
     let mut erred = false;
 
     let opts = Options::new();
@@ -34,23 +34,23 @@ fn main() {
             process::exit(1);
         }
     };
-    if !matches.free.is_empty() {
-        for value in matches.free {
-            if factor_it(value) == 1 {
-                erred = true;
-            }
-        }
-    } else {
+    if matches.free.is_empty() {
         let stdin = io::stdin();
         for line in stdin.lock().lines() {
             for value in line.unwrap().split_whitespace() {
-                if factor_it(value.to_string()) == 1 {
+                if factor_it(value) == 1 {
                     erred = true;
                 }
             }
         }
         if erred {
             process::exit(1);
+        }
+    } else {
+        for value in matches.free {
+            if factor_it(&value) == 1 {
+                erred = true;
+            }
         }
     }
     if erred {

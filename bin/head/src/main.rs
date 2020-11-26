@@ -7,8 +7,8 @@ fn head(file: &str, count: usize, header: bool, bytes: bool) {
     if file == "-" {
         stdin().read_to_string(&mut contents).unwrap();
     } else {
-        buf = fs::read_to_string(file);
-        let contents = match buf {
+        let buf = fs::read_to_string(file);
+        contents = match buf {
             Ok(c) => c,
             Err(m) => panic!("Error opening file: {:?}", m),
         };
@@ -66,7 +66,7 @@ fn main() {
     		)
     		.arg(
     		    Arg::new("HEADER")
-    		    .about("Each file is preceded by a header consisting of the string “==> XXX ≤==” where “XXX” is the name of the file.")
+    		    .about("Each file is preceded by a header consisting of the string \"==> XXX <==\" where \"XXX\" is the name of the file.")
     		    .short('v')
     		    .long("verbose")
 		    )
@@ -103,6 +103,6 @@ fn main() {
             i = 1;
         }
     } else {
-          head("-", count, header, bytes);
+        head("-", count, header, bytes);
     }
 }

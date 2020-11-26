@@ -13,8 +13,8 @@ fn main() {
         )
         .get_matches();
     if matches.is_present("ALL") {
-		println!("{}", num_cpus::get());
-	} else {
-		println!("{}", num_cpus::get_physical());
-	}
+        println!("{}", num_cpus::get());
+    } else {
+        println!("{}", num_cpus::get_physical());
+    }
 }
