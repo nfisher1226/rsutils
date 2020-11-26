@@ -38,16 +38,16 @@ usr.bin:
 * yes
 
 ## Why Rust?
-Rust is comparable to C in the control it give the programmer to manage
+Rust is comparable to C in the control it gives the programmer to manage
 memory directly, while giving added peace of mind that memory and
 concurrency safety are baked right in to the language at compile time.
 Generally if the Rust compiler compiles the code, entire classes of
 common bugs and security issues that are common in C and C++ are not
 going to be present.
 
-Rust crates give a rich ecosystem for adding functionality, and often
-a problem that would be solved with dozens of lines of code can be
-solved in Rust just by including an external crate and calling the
+Additionally, Rust crates give a rich ecosystem for adding functionality,
+and often a problem that would be solved with dozens of lines of code can
+be solved in Rust just by including an external crate and calling the
 appropriate functions. While linking to third-party libraries is an
 option in C, documentation is often lacking and portability concerns may
 preclude the practice.
