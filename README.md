@@ -35,6 +35,7 @@ usr.bin:
 * fold
 * nproc
 * rev
+* readlink
 * yes
 
 ## Why Rust?
