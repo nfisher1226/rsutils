@@ -1,7 +1,7 @@
 use getopts::Options;
 use primes::factors;
 use std::env;
-use std::io::{self};
+use std::io::{self, BufRead};
 use std::process;
 
 fn factor_it(value: String) -> i32 {
@@ -41,21 +41,16 @@ fn main() {
             }
         }
     } else {
-        loop {
-            let mut line = String::new();
-            io::stdin().read_line(&mut line).expect("No input");
-            if line.is_empty() {
-                if erred {
-                    process::exit(1);
-                } else {
-                    process::exit(0);
-                }
-            }
-            for value in line.split_whitespace() {
+        let stdin = io::stdin();
+        for line in stdin.lock().lines() {
+            for value in line.unwrap().split_whitespace() {
                 if factor_it(value.to_string()) == 1 {
                     erred = true;
                 }
             }
+        }
+        if erred {
+            process::exit(1);
         }
     }
     if erred {

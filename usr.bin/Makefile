@@ -4,6 +4,7 @@ SUBDIRS += basename
 SUBDIRS += factor
 SUBDIRS += fold
 SUBDIRS += nproc
+SUBDIRS += readlink
 SUBDIRS += rev
 SUBDIRS += yes
 

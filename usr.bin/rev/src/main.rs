@@ -18,13 +18,15 @@ fn main() {
             index += 1;
         }
     } else {
-        loop {
-            let mut line = String::new();
-            stdin().read_line(&mut line).unwrap();
-            if line.is_empty() {
-                break;
-            }
-            println!("{}", line.trim().chars().rev().collect::<String>());
+        let stdin = stdin();
+        for line in stdin.lock().lines() {
+            let line = line
+                .unwrap()
+                .trim()
+                .chars()
+                .rev()
+                .collect::<String>();
+            println!("{}", line);
         }
     }
 }

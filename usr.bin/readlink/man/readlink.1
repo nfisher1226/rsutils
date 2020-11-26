@@ -1,0 +1,42 @@
+.Dd 2020-11-25
+.Dt READLINK 1
+.Os rsUtils
+.Sh NAME
+.Nm readlink
+.Nd print symbolic link target or canonical file name
+.Sh SYNOPSIS
+.Nm
+.Op Fl f, -canonicalize
+.Op Fl n, -no-newline
+.Op Fl h, -help
+.Op Fl V, -version
+.Ar path1
+.Ar path2
+.Sh DESCRIPTION
+.Nm
+writes the target of
+.Ar path ,
+if it is a symbolic link, to stdout.
+If not,
+.Nm
+exits with a non-zero return value.
+.Sh OPTIONS
+.Bl -tag -width Ds
+.It Fl f, -canonicalize
+Canonicalize
+.Ar path ,
+which needn't be a symlink, by recursively following every symlink in its path
+components.
+.It Fl n, -no-newline
+Do not print the terminating newline.
+.It Fl h, -help
+Print a help message and exit.
+.It Fl V, -version
+Print the program name and version and exit.
+.Sh AUTHOR
+Written by the JeanG3nie for rsUtils
+.Sh EXIT STATUS
+.Ex -std readlink
+.Sh SEE ALSO
+.Xr readlink 2 ,
+.Xr realpath 3

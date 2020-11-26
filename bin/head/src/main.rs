@@ -7,7 +7,11 @@ fn head(file: &str, count: usize, header: bool, bytes: bool) {
     if file == "-" {
         stdin().read_to_string(&mut contents).unwrap();
     } else {
-        contents = fs::read_to_string(file).unwrap();
+        buf = fs::read_to_string(file);
+        let contents = match buf {
+            Ok(c) => c,
+            Err(m) => panic!("Error opening file: {:?}", m),
+        };
     }
     if header {
         println!("==> {} <==", file);
