@@ -20,6 +20,23 @@ directory with `make && make install`, adjusting paths as above.
 
 Alternative to the alternative, each utility can be built with `cargo
 build`, which is what the Makefiles do internally.
+## Included Utilities
+bin:
+* echo
+* head
+* hostname
+* sleep
+
+usr.bin:
+* base32
+* base64
+* basename
+* factor
+* fold
+* nproc
+* rev
+* yes
+
 ## Why Rust?
 Rust is comparable to C in the control it give the programmer to manage
 memory directly, while giving added peace of mind that memory and
