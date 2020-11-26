@@ -1,5 +1,5 @@
 [package]
-name = "base64"
+name = "fold"
 version = "0.1.0"
 authors = ["Nathan Fisher <nfisher.sr@gmail.com>"]
 edition = "2018"
@@ -8,7 +8,7 @@ edition = "2018"
 
 [dependencies]
 clap = "3.0.0-beta.2"
-base64 = "0.13"
+textwrap = "0.12"
 
 [profile.release]
 panic = 'abort'

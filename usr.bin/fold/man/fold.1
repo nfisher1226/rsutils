@@ -1,0 +1,60 @@
+.Dd 2020-11-25
+.Dt FOLD 1
+.Os rsUtils
+.Sh NAME
+.Nm fold
+.Nd fold long lines
+.Sh SYNOPSIS
+.Nm
+.Op Fl bs
+.Op Fl w Ar width
+.Op Ar
+.Sh DESCRIPTION
+.Nm
+formats each given file, breaking the lines to fit within the designated width.
+If no
+.Ar file
+is given, or if
+.Ar file
+is "-",
+.Nm
+takes it's input from stdin.
+.Sh OPTIONS
+.Bl -tag -width XwXwidthXX
+.It Fl b, -bytes
+Count
+.Ar width
+in bytes rather than column positions.
+.It Fl s, -spaces
+Fold line after the last blank character within the first
+.Ar width
+column positions. If a blank character does not exist within the width, then the
+line will still be split at the
+.Ar width .
+In order to ensure lines are folded correctly,
+.Nm
+replaces tabs with spaces, assuming 4 spaces per tab. If this is incorrect for
+your environment,
+.Nm
+can take it's input from
+.Ar expand .
+.It Fl w, -width Ar width
+Specifies
+.Ar width
+to use as a line width, instead of the default 80 characters.
+.It Fl h, -help
+Print a usage statement and exit.
+.It Fl V, -verbose
+Print the program name and version and exit.
+.Sh EXIT STATUS
+.Ex -std
+.Sh SEE ALSO
+.Xr expand 1 ,
+.Xr fmt 1
+.Sh AUTHOR
+Written by the JeanG3nie for rsUtils
+.Sh HISTORY
+The
+.Nm
+utility appeared in
+.Bx 1 .
