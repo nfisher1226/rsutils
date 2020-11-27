@@ -1,3 +1,4 @@
+#![warn(clippy::all, clippy::pedantic)]
 use base64::{decode, encode};
 use clap::{crate_version, App, Arg};
 use std::fs;
@@ -11,7 +12,6 @@ fn main() {
         .arg(
             Arg::new("INPUT")
                 .about("The input file to use")
-                .multiple(true),
         )
         .arg(
             Arg::new("DECODE")

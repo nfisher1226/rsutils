@@ -1,3 +1,4 @@
+#![warn(clippy::all, clippy::pedantic)]
 use std::time::Duration;
 use std::{env, process, thread};
 

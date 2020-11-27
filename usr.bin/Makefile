@@ -1,6 +1,7 @@
 SUBDIRS += base32
 SUBDIRS += base64
 SUBDIRS += basename
+SUBDIRS += dirname
 SUBDIRS += factor
 SUBDIRS += fold
 SUBDIRS += nproc

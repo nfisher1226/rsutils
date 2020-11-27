@@ -1,3 +1,4 @@
+#![warn(clippy::all, clippy::pedantic)]
 use clap::{crate_version, App, Arg};
 use std::{io, process};
 
@@ -9,7 +10,6 @@ fn main() -> io::Result<()> {
         .arg(
             Arg::new("NAME")
                 .about("name to set")
-                .multiple(true),
         )
         .arg(
             Arg::new("STRIP")
@@ -18,10 +18,7 @@ fn main() -> io::Result<()> {
                 .long("strip"),
         )
         .get_matches();
-    let mut strip = false;
-    if matches.is_present("STRIP") {
-        strip = true;
-    }
+    let strip = matches.is_present("STRIP");
     if matches.is_present("NAME") {
         let hostname = matches.value_of("NAME").unwrap().to_string();
         let result = hostname::set(hostname);

@@ -1,3 +1,4 @@
+#![warn(clippy::all, clippy::pedantic)]
 use getopts::Options;
 use primes::factors;
 use std::env;
@@ -35,8 +36,7 @@ fn main() {
         }
     };
     if matches.free.is_empty() {
-        let stdin = io::stdin();
-        for line in stdin.lock().lines() {
+        for line in io::stdin().lock().lines() {
             for value in line.unwrap().split_whitespace() {
                 if factor_it(value) == 1 {
                     erred = true;

@@ -1,3 +1,4 @@
+#![warn(clippy::all, clippy::pedantic)]
 use clap::{crate_version, App, Arg};
 use std::fs;
 use std::io::{stdin, Read};
@@ -16,13 +17,11 @@ fn head(file: &str, count: usize, header: bool, bytes: bool) {
     if header {
         println!("==> {} <==", file);
     }
-    let mut index = 0;
     if bytes {
-        for char in contents.chars() {
+        for (index, char) in contents.chars().into_iter().enumerate() {
             if index < count {
                 print!("{}", char);
             }
-            index += 1;
             if index == count {
                 println!();
                 return;
@@ -30,11 +29,10 @@ fn head(file: &str, count: usize, header: bool, bytes: bool) {
         }
         println!();
     } else {
-        for line in contents.lines() {
+        for (index, line) in contents.lines().into_iter().enumerate() {
             if index < count {
                 println!("{}", line);
             }
-            index += 1;
             if index == count {
                 return;
             }
@@ -81,28 +79,17 @@ fn main() {
         .get_matches();
 
     let count: usize = matches.value_of_t("LINES").unwrap();
-    let mut bytes: bool = false;
-    if matches.is_present("BYTES") {
-        bytes = true;
-    }
-    let mut header: bool = false;
-    if matches.is_present("HEADER") && !matches.is_present("QUIET") {
-        header = true;
-    }
-    if matches.is_present("FILES") {
-        let files: Vec<_> = matches.values_of("FILES").unwrap().collect();
-        if !matches.is_present("QUIET") && files.len() > 1 {
-            header = true;
-        }
-        let mut i = 0;
-        for file in files {
-            if i == 1 && header {
-                println!();
-            }
-            head(file, count, header, bytes);
-            i = 1;
-        }
+    let bytes: bool = matches.is_present("BYTES");
+    let files: Vec<_> = if matches.is_present("FILES") {
+        matches.values_of("FILES").unwrap().collect()
     } else {
-        head("-", count, header, bytes);
+        vec!["-"]
+    };
+    let header: bool = !matches.is_present("QUIET") && { files.len() > 1 || matches.is_present("HEADER") };
+    for (index, file) in files.into_iter().enumerate() {
+        if index == 1 && header {
+            println!();
+        }
+        head(file, count, header, bytes);
     }
 }

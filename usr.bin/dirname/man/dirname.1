@@ -1,0 +1,33 @@
+.Dd 2020-09-07
+.Dt DIRNAME 1
+.Os rsUtils
+.Sh NAME
+.Nm dirname
+.Nd strip last component from file name
+.Sh SYNOPSIS
+.Nm
+.Op z
+.Ar string
+.Sh DESCRIPTION
+.Nm
+output
+.Ar string
+with its last non-slash component and trailing slashes removed. If
+.Ar string
+contains no /'s, output '.' (meaning the current directory).
+.Sh OPTIONS
+.Bl -tag -width XwXwidthXX
+.It Fl z, -zero
+Do not print a trailing newline
+.Sh EXIT STATUS
+.Ex -std dirname
+.Sh AUTHOR
+Written by the JeanG3nie for HitchHiker Linux.
+.Sh SEE ALSO
+.Xr basename 1 ,
+.Xr readlink 1 ,
+.Xr dirname 3
+.Sh STANDARDS
+The
+.Nm
+utility is compliant with the IEEE Std 1003.1-2017 standard.

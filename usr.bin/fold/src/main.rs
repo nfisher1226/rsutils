@@ -1,3 +1,4 @@
+#![warn(clippy::all, clippy::pedantic)]
 use clap::{crate_version, App, Arg};
 use std::fs::File;
 use std::io::prelude::*;
@@ -93,28 +94,22 @@ fn main() -> io::Result<()> {
         )
         .get_matches();
     let width: usize = matches.value_of_t("WIDTH").unwrap();
-    let mut bytes: bool = false;
-    if matches.is_present("BYTES") {
-        bytes = true;
-    }
-    let mut words: bool = false;
-    if matches.is_present("WORDS") {
-        words = true;
-    }
-    if matches.is_present("INPUT") {
-        let files: Vec<_> = matches.values_of("INPUT").unwrap().collect();
-        for file in files {
-            if file == "-" {
-                wrap_stdin(width, words, bytes);
-            } else {
-                wrap_file(file.to_string(), width, words, bytes);
-            }
-            if bytes {
-                println!();
-            }
-        }
+    let bytes: bool = matches.is_present("BYTES");
+    let words: bool = matches.is_present("WORDS");
+    let files: Vec<_> = if matches.is_present("INPUT") {
+        matches.values_of("INPUT").unwrap().collect()
     } else {
-        wrap_stdin(width, words, bytes);
+        vec!["-"]
+    };
+    for file in files {
+        if file == "-" {
+            wrap_stdin(width, words, bytes);
+        } else {
+            wrap_file(file.to_string(), width, words, bytes);
+        }
+        if bytes {
+            println!();
+        }
     }
     Ok(())
 }

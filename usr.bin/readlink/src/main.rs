@@ -1,3 +1,4 @@
+#![warn(clippy::all, clippy::pedantic)]
 use clap::{crate_version, App, Arg};
 use std::path::PathBuf;
 use std::{fs, process};
@@ -34,11 +35,8 @@ fn main() {
                 .long("no-newline"),
         )
         .get_matches();
-    let mut newline: bool = true;
-    if matches.is_present("LF") {
-        newline = false;
-    }
     if matches.is_present("PATH") {
+        let mut newline: bool = !matches.is_present("LF");
         let paths: Vec<_> = matches.values_of("PATH").unwrap().collect();
         if paths.len() > 1 {
             if !newline {

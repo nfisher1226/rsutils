@@ -1,3 +1,4 @@
+#![warn(clippy::all, clippy::pedantic)]
 use clap::{crate_version, App, Arg};
 use data_encoding::BASE32;
 use std::fs;
@@ -11,7 +12,6 @@ fn main() {
         .arg(
             Arg::new("INPUT")
                 .about("The input file to use")
-                .multiple(true),
         )
         .arg(
             Arg::new("DECODE")
