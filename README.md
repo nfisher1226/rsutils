@@ -31,6 +31,7 @@ usr.bin:
 * base32
 * base64
 * basename
+* dirname
 * factor
 * fold
 * nproc
