@@ -32,8 +32,7 @@ fn wrapit(line: &str, width: usize) {
 }
 
 fn wrap_stdin(width: usize, words: bool, bytes: bool) {
-    let stdin = io::stdin();
-    for line in stdin.lock().lines() {
+    for line in io::stdin().lock().lines() {
         if words {
             wrapit_s(&line.unwrap(), width);
         } else if bytes {
@@ -44,7 +43,7 @@ fn wrap_stdin(width: usize, words: bool, bytes: bool) {
     }
 }
 
-fn wrap_file(file: String, width: usize, words: bool, bytes: bool) {
+fn wrap_file(file: &str, width: usize, words: bool, bytes: bool) {
     let buf = File::open(file);
     let buf = match buf {
         Ok(buf) => buf,
@@ -105,7 +104,7 @@ fn main() -> io::Result<()> {
         if file == "-" {
             wrap_stdin(width, words, bytes);
         } else {
-            wrap_file(file.to_string(), width, words, bytes);
+            wrap_file(file, width, words, bytes);
         }
         if bytes {
             println!();

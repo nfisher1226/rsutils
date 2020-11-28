@@ -7,6 +7,7 @@ SUBDIRS += fold
 SUBDIRS += nproc
 SUBDIRS += readlink
 SUBDIRS += rev
+SUBDIRS += wc
 SUBDIRS += yes
 
 all: $(SUBDIRS)
