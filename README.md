@@ -37,6 +37,7 @@ usr.bin:
 * nproc
 * rev
 * readlink
+* wc
 * yes
 
 ## Why Rust?
