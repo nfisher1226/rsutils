@@ -40,6 +40,15 @@ usr.bin:
 * wc
 * yes
 
+## Compatability
+The included utilities strive for POSIX comformance and display the
+expected behavior. However, some extensions have been implemented in the
+hope of improving consistency accross utilities.
+
+As an example, both base32 and base64 will process multiple files and
+print an identifying header for each one, identical to the behavior of
+the head utility. This behavior can be suppressed with the "-q" or
+"--quiet" flag.
 ## Why Rust?
 Rust is comparable to C in the control it gives the programmer to manage
 memory directly, while giving added peace of mind that memory and

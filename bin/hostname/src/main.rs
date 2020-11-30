@@ -18,10 +18,8 @@ fn main() -> io::Result<()> {
                 .long("strip"),
         )
         .get_matches();
-    let strip = matches.is_present("STRIP");
     if matches.is_present("NAME") {
-        let hostname = matches.value_of("NAME").unwrap().to_string();
-        let result = hostname::set(hostname);
+        let result = hostname::set(matches.value_of("NAME").unwrap().to_string());
         match result {
             Ok(c) => c,
             Err(m) => {
@@ -31,7 +29,7 @@ fn main() -> io::Result<()> {
         };
     } else {
         let hostname = hostname::get()?;
-        if strip {
+        if matches.is_present("STRIP") {
             println!("{}", hostname.to_string_lossy().split('.').next().unwrap());
         } else {
             println!("{}", hostname.to_string_lossy());

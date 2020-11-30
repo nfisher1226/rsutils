@@ -21,8 +21,7 @@ fn head(file: &str, count: usize, header: bool, bytes: bool) {
         for (index, char) in contents.chars().into_iter().enumerate() {
             if index < count {
                 print!("{}", char);
-            }
-            if index == count {
+            } else {
                 println!();
                 return;
             }
@@ -32,8 +31,7 @@ fn head(file: &str, count: usize, header: bool, bytes: bool) {
         for (index, line) in contents.lines().into_iter().enumerate() {
             if index < count {
                 println!("{}", line);
-            }
-            if index == count {
+            } else {
                 return;
             }
         }
@@ -78,8 +76,6 @@ fn main() {
     		)
         .get_matches();
 
-    let count: usize = matches.value_of_t("LINES").unwrap();
-    let bytes: bool = matches.is_present("BYTES");
     let files: Vec<_> = if matches.is_present("FILES") {
         matches.values_of("FILES").unwrap().collect()
     } else {
@@ -90,6 +86,6 @@ fn main() {
         if index == 1 && header {
             println!();
         }
-        head(file, count, header, bytes);
+        head(file, matches.value_of_t("LINES").unwrap(), header, matches.is_present("BYTES"));
     }
 }

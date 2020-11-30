@@ -6,7 +6,7 @@
 .Nd base32 encode/decode data and print to standard output
 .Sh SYNOPSIS
 .Nm
-.Op Fl dhiV
+.Op Fl dhiqvV
 .Op Fl w Ar num
 .Op Ar
 .Sh DESCRIPTION
@@ -22,6 +22,11 @@ Decode the input instead of encoding it.
 ignore whitespace characters when decoding
 .It Fl h, -help
 Display a help message and exit.
+.It Fl q, -quiet
+Do not print a header. Overrrides
+.Fl v .
+.It Fl v, -verbose
+Print a header identifying the file being processed.
 .It Fl V, -version
 Display program version and exit.
 .It Fl w, -wrap Ar num

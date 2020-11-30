@@ -22,13 +22,11 @@ fn main() {
     if args.len() < 2 {
         args.push("-".to_string())
     }
-    for (index, file) in args.into_iter().enumerate() {
-        if index > 0 {
-            if file == "-" {
-                rev_stdin();
-            } else {
-                rev_file(&file);
-            }
+    for file in args.into_iter().skip(1) {
+        if file == "-" {
+            rev_stdin();
+        } else {
+            rev_file(&file);
         }
     }
 }

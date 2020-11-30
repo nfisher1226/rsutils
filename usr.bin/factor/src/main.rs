@@ -14,8 +14,7 @@ fn factor_it(value: &str) -> i32 {
         }
     };
     print!("{}:", value);
-    let factors = factors(value);
-    for factor in &factors {
+    for factor in &factors(value) {
         print!(" {}", factor);
     }
     println!();

@@ -3,20 +3,15 @@ use std::env;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    let mut n = false;
-    let mut i = 1;
     let len = args.len();
-    if len > 1 && args[1] == "-n" {
-        n = true;
-        i = 2;
-    }
-    while i < len {
-        if i < len - 1 {
-            print!("{} ", args[i]);
+    let n = len > 1 && args[1] == "-n";
+    let i = if n { 2 } else { 1 };
+    for (index, arg) in args.iter().enumerate().skip(i) {
+        if index < len - 1 {
+            print!("{} ", arg);
         } else {
-            print!("{}", args[i]);
+            print!("{}", arg);
         }
-        i += 1;
     }
     if !n {
         println!();

@@ -4,11 +4,10 @@ use std::path::PathBuf;
 use std::{fs, process};
 
 fn printpath(path: PathBuf, newline: bool) {
-    let path = path.into_os_string().into_string().unwrap();
     if newline {
-        println!("{}", path);
+        println!("{}", path.into_os_string().into_string().unwrap());
     } else {
-        print!("{}", path);
+        print!("{}", path.into_os_string().into_string().unwrap());
     }
 }
 
@@ -36,18 +35,18 @@ fn main() {
         )
         .get_matches();
     if matches.is_present("PATH") {
-        let mut newline: bool = !matches.is_present("LF");
         let paths: Vec<_> = matches.values_of("PATH").unwrap().collect();
-        if paths.len() > 1 {
-            if !newline {
+        let newline = if paths.len() > 1 {
+            if matches.is_present("LF") {
                 eprintln!("readlink: ignoring -n with multiple arguments");
             }
-            newline = true;
-        }
+            true
+        } else {
+            !matches.is_present("LF")
+        };
         for path in paths {
             if matches.is_present("CANON") {
-                let path = fs::canonicalize(path);
-                let path = match path {
+                let path = match fs::canonicalize(path) {
                     Ok(path) => path,
                     Err(m) => {
                         eprintln!("Error: {}", m);
@@ -56,8 +55,7 @@ fn main() {
                 };
                 printpath(path, newline);
             } else {
-                let path = fs::read_link(path);
-                let path = match path {
+                let path = match fs::read_link(path) {
                     Ok(path) => path,
                     Err(m) => {
                         eprintln!("Error: {}", m);

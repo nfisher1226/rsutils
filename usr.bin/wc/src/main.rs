@@ -30,7 +30,7 @@ fn print_values(values: &Values, flags: &[char]) {
     println!("{}", line);
 }
 
-fn get_values(file: &str, flags: &[char]) -> Values {
+fn get_values(file: &str, totals: &mut Values, flags: &[char]) {
     let mut contents = String::new();
     if file == "-" {
         stdin().read_to_string(&mut contents).unwrap();
@@ -51,10 +51,22 @@ fn get_values(file: &str, flags: &[char]) -> Values {
     };
     for flag in flags {
         match flag {
-            'l' => f.lines = contents.lines().count(),
-            'w' => f.words = contents.split_whitespace().count(),
-            'm' => f.chars = contents.chars().count(),
-            'c' => f.bytes = contents.bytes().count(),
+            'l' => {
+                f.lines = contents.lines().count();
+                totals.lines += f.lines;
+            }
+            'w' => {
+                f.words = contents.split_whitespace().count();
+                totals.words += f.words;
+            }
+            'm' => {
+                f.chars = contents.chars().count();
+                totals.chars += f.words;
+            }
+            'c' => {
+                f.bytes = contents.bytes().count();
+                totals.bytes += f.bytes;
+            }
             'L' => {
                 f.max = 0;
                 for line in contents.lines() {
@@ -63,12 +75,12 @@ fn get_values(file: &str, flags: &[char]) -> Values {
                         f.max = max;
                     }
                 }
+                totals.max += f.max;
             }
             _ => panic!("Illegal input"),
         };
     }
     print_values(&f, &flags);
-    f
 }
 
 fn main() {
@@ -147,12 +159,7 @@ fn main() {
         max: 0,
     };
     for file in &files {
-        let v = get_values(&file, &flags);
-        totals.lines += v.lines;
-        totals.words += v.words;
-        totals.chars += v.words;
-        totals.bytes += v.bytes;
-        totals.max += v.max;
+        get_values(&file, &mut totals, &flags);
     }
     if files.len() > 1 {
         print_values(&totals, &flags);
