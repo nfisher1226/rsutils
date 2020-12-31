@@ -1,5 +1,5 @@
 #![warn(clippy::all, clippy::pedantic)]
-use clap::{crate_version, App, Arg};
+use clap::{crate_version, App, Arg, ArgMatches};
 use std::fs;
 use std::io::{stdin, Read};
 
@@ -12,22 +12,49 @@ struct Values {
     max: usize,
 }
 
-fn print_values(values: &Values, flags: &[char]) {
-    let mut line = String::new();
-    for flag in flags {
-        match flag {
-            'l' => line = format!("{}\t{}", line, values.lines),
-            'w' => line = format!("{}\t{}", line, values.words),
-            'm' => line = format!("{}\t{}", line, values.chars),
-            'c' => line = format!("{}\t{}", line, values.bytes),
-            'L' => line = format!("{}\t{}", line, values.max),
-            _ => panic!("Illegal input"),
+impl Values {
+    fn print_values(&self, flags: &[char]) {
+        let mut line = String::new();
+        for flag in flags {
+            match flag {
+                'l' => line = format!("{}\t{}", line, self.lines),
+                'w' => line = format!("{}\t{}", line, self.words),
+                'm' => line = format!("{}\t{}", line, self.chars),
+                'c' => line = format!("{}\t{}", line, self.bytes),
+                'L' => line = format!("{}\t{}", line, self.max),
+                _ => panic!("Illegal input"),
+            }
         }
+        if self.name != "-" {
+            line = format!("{}\t{}", line, self.name);
+        }
+        println!("{}", line);
     }
-    if values.name != "-" {
-        line = format!("{}\t{}", line, values.name);
+}
+
+fn get_flags(args: &ArgMatches) -> Vec<char> {
+    let mut flags = Vec::new();
+    if args.is_present("LINES") {
+        flags.push('l');
     }
-    println!("{}", line);
+    if args.is_present("WORDS") {
+        flags.push('w');
+    }
+    if args.is_present("CHARS") {
+        flags.push('m');
+    }
+    if args.is_present("BYTES") {
+        flags.push('c');
+    }
+    if args.is_present("MAX") {
+        flags.push('L');
+    }
+    if flags.is_empty() {
+        flags.push('c');
+        flags.push('l');
+        flags.push('w');
+    }
+    flags
 }
 
 fn get_values(file: &str, totals: &mut Values, flags: &[char]) {
@@ -80,7 +107,7 @@ fn get_values(file: &str, totals: &mut Values, flags: &[char]) {
             _ => panic!("Illegal input"),
         };
     }
-    print_values(&f, &flags);
+    f.print_values(&flags);
 }
 
 fn main() {
@@ -124,27 +151,7 @@ fn main() {
                 .long("words"),
         )
         .get_matches();
-    let mut flags = Vec::new();
-    if matches.is_present("LINES") {
-        flags.push('l');
-    }
-    if matches.is_present("WORDS") {
-        flags.push('w');
-    }
-    if matches.is_present("CHARS") {
-        flags.push('m');
-    }
-    if matches.is_present("BYTES") {
-        flags.push('c');
-    }
-    if matches.is_present("MAX") {
-        flags.push('L');
-    }
-    if flags.is_empty() {
-        flags.push('c');
-        flags.push('l');
-        flags.push('w');
-    }
+    let flags = get_flags(&matches);
     let files: Vec<_> = if matches.is_present("INPUT") {
         matches.values_of("INPUT").unwrap().collect()
     } else {
@@ -162,6 +169,6 @@ fn main() {
         get_values(&file, &mut totals, &flags);
     }
     if files.len() > 1 {
-        print_values(&totals, &flags);
+        totals.print_values(&flags);
     }
 }

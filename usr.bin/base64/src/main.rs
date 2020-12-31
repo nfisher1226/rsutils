@@ -27,6 +27,16 @@ fn encode_base64(contents: &str, wrap: usize) {
     }
 }
 
+fn get_contents(file: &str) -> String {
+    let mut contents = String::new();
+    if file == "-" {
+        io::stdin().read_to_string(&mut contents).unwrap();
+    } else {
+        contents = fs::read_to_string(&file).unwrap();
+    }
+    contents
+}
+
 fn main() {
     let matches = App::new("base64")
         .version(crate_version!())
@@ -85,12 +95,7 @@ fn main() {
         } else if index > 0 {
             println!();
         }
-        let mut contents = String::new();
-        if file == "-" {
-            io::stdin().read_to_string(&mut contents).unwrap();
-        } else {
-            contents = fs::read_to_string(&file).unwrap();
-        }
+        let contents = get_contents(file);
         if matches.is_present("DECODE") {
             decode_base64(contents, matches.is_present("IGNORE"));
         } else {
