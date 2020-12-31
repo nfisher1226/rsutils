@@ -1,49 +1,55 @@
 #![warn(clippy::all, clippy::pedantic)]
-use clap::{crate_version, App, Arg};
+use clap::{crate_version, App, Arg, ArgMatches};
 use std::fs::File;
 use std::io::prelude::*;
 use std::io::{self, BufReader};
+use std::process;
 use textwrap::fill;
 
-fn wrapit_s(line: &str, width: usize) {
-    let line = line.replace('\t', "    ");
-    println!("{}", fill(line.trim_end(), width));
-}
-
-fn wrapit_b(line: &str, width: usize) {
-    for (index, b) in line.as_bytes().iter().enumerate() {
-        if index % width == 0 {
-            println!();
+fn wrap_line(line: &str, args: &ArgMatches) {
+    let width = match args.value_of_t("WIDTH") {
+        Ok(c) => c,
+        Err(e) => {
+            eprintln!("{}", e);
+            process::exit(1);
+        },
+    };
+    if args.is_present("WORDS") {
+        let line = line.replace('\t', "    ");
+        println!("{}", fill(line.trim_end(), width));
+    } else if args.is_present("BYTES") {
+        for (index, b) in line.as_bytes().iter().enumerate() {
+            if index % width == 0 {
+                println!();
+            }
+            print!("{}", *b as char);
         }
-        print!("{}", *b as char);
+    } else {
+        let line = line
+            .chars()
+            .collect::<Vec<char>>()
+            .chunks(width)
+            .map(|c| c.iter().collect::<String>())
+            .collect::<Vec<String>>();
+        for line in &line {
+            println!("{}", line);
+        }
     }
 }
 
-fn wrapit(line: &str, width: usize) {
-    let line = line
-        .chars()
-        .collect::<Vec<char>>()
-        .chunks(width)
-        .map(|c| c.iter().collect::<String>())
-        .collect::<Vec<String>>();
-    for line in &line {
-        println!("{}", line);
-    }
-}
-
-fn wrap_stdin(width: usize, words: bool, bytes: bool) {
+fn wrap_stdin(args: &ArgMatches) {
     for line in io::stdin().lock().lines() {
-        if words {
-            wrapit_s(&line.unwrap(), width);
-        } else if bytes {
-            wrapit_b(&line.unwrap(), width);
-        } else {
-            wrapit(&line.unwrap(), width);
-        }
+        wrap_line(&match line {
+            Ok(c) => c,
+            Err(e) => {
+                eprintln!("{}", e);
+                process::exit(1);
+            },
+        }, &args);
     }
 }
 
-fn wrap_file(file: &str, width: usize, words: bool, bytes: bool) {
+fn wrap_file(file: &str, args: &ArgMatches) {
     let buf = File::open(file);
     let buf = match buf {
         Ok(buf) => buf,
@@ -51,13 +57,13 @@ fn wrap_file(file: &str, width: usize, words: bool, bytes: bool) {
     };
     let buf = BufReader::new(buf);
     for line in buf.lines() {
-        if words {
-            wrapit_s(&line.unwrap(), width);
-        } else if bytes {
-            wrapit_b(&line.unwrap(), width);
-        } else {
-            wrapit(&line.unwrap(), width);
-        }
+        wrap_line(&match line {
+            Ok(c) => c,
+            Err(e) => {
+                eprintln!("{}", e);
+                process::exit(1);
+            },
+        }, &args);
     }
 }
 
@@ -92,9 +98,6 @@ fn main() -> io::Result<()> {
                 .takes_value(true),
         )
         .get_matches();
-    let width: usize = matches.value_of_t("WIDTH").unwrap();
-    let bytes: bool = matches.is_present("BYTES");
-    let words: bool = matches.is_present("WORDS");
     let files: Vec<_> = if matches.is_present("INPUT") {
         matches.values_of("INPUT").unwrap().collect()
     } else {
@@ -102,11 +105,11 @@ fn main() -> io::Result<()> {
     };
     for file in files {
         if file == "-" {
-            wrap_stdin(width, words, bytes);
+            wrap_stdin(&matches);
         } else {
-            wrap_file(file, width, words, bytes);
+            wrap_file(file, &matches);
         }
-        if bytes {
+        if matches.is_present("BYTES") {
             println!();
         }
     }

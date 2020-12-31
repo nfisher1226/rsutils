@@ -1,5 +1,5 @@
 #![warn(clippy::all, clippy::pedantic)]
-use clap::{crate_version, App, Arg};
+use clap::{crate_version, App, Arg, ArgMatches};
 use std::path::PathBuf;
 use std::{fs, process};
 
@@ -8,6 +8,44 @@ fn printpath(path: PathBuf, newline: bool) {
         println!("{}", path.into_os_string().into_string().unwrap());
     } else {
         print!("{}", path.into_os_string().into_string().unwrap());
+    }
+}
+
+fn getpath(args: &ArgMatches) {
+    if args.is_present("PATH") {
+        let paths: Vec<_> = args.values_of("PATH").unwrap().collect();
+        let newline = if paths.len() > 1 {
+            if args.is_present("LF") {
+                eprintln!("readlink: ignoring -n with multiple arguments");
+            }
+            true
+        } else {
+            !args.is_present("LF")
+        };
+        for path in paths {
+            if args.is_present("CANON") {
+                let path = match fs::canonicalize(path) {
+                    Ok(path) => path,
+                    Err(m) => {
+                        eprintln!("Error: {}", m);
+                        process::exit(1);
+                    }
+                };
+                printpath(path, newline);
+            } else {
+                let path = match fs::read_link(path) {
+                    Ok(path) => path,
+                    Err(m) => {
+                        eprintln!("Error: {}", m);
+                        process::exit(1);
+                    }
+                };
+                printpath(path, newline);
+            }
+        }
+    } else {
+        eprintln!("Error: missing operand");
+        process::exit(1)
     }
 }
 
@@ -34,39 +72,5 @@ fn main() {
                 .long("no-newline"),
         )
         .get_matches();
-    if matches.is_present("PATH") {
-        let paths: Vec<_> = matches.values_of("PATH").unwrap().collect();
-        let newline = if paths.len() > 1 {
-            if matches.is_present("LF") {
-                eprintln!("readlink: ignoring -n with multiple arguments");
-            }
-            true
-        } else {
-            !matches.is_present("LF")
-        };
-        for path in paths {
-            if matches.is_present("CANON") {
-                let path = match fs::canonicalize(path) {
-                    Ok(path) => path,
-                    Err(m) => {
-                        eprintln!("Error: {}", m);
-                        process::exit(1);
-                    }
-                };
-                printpath(path, newline);
-            } else {
-                let path = match fs::read_link(path) {
-                    Ok(path) => path,
-                    Err(m) => {
-                        eprintln!("Error: {}", m);
-                        process::exit(1);
-                    }
-                };
-                printpath(path, newline);
-            }
-        }
-    } else {
-        eprintln!("Error: missing operand");
-        process::exit(1)
-    }
+    getpath(&matches);
 }
