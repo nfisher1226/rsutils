@@ -29,8 +29,8 @@ fn main() {
     let opts = Options::new();
     let matches = match opts.parse(&args[1..]) {
         Ok(m) => m,
-        Err(f) => {
-            eprintln!("{}: {}", progname, f.to_string());
+        Err(e) => {
+            eprintln!("{}: {}", progname, e.to_string());
             process::exit(1);
         }
     };

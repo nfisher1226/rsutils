@@ -10,8 +10,8 @@ fn main() {
     let opts = Options::new();
     let matches = match opts.parse(&args[1..]) {
         Ok(m) => m,
-        Err(m) => {
-            eprintln!("Error: {}", m.to_string());
+        Err(e) => {
+            eprintln!("Error: {}", e.to_string());
             eprintln!("{}", usage);
             process::exit(1);
         }

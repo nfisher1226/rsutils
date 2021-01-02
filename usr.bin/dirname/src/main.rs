@@ -18,10 +18,11 @@ fn main() {
         }
     };
     let path = if matches.free.len() == 1 {
-        Path::new(&matches.free[0])
-            .parent()
-            .unwrap()
-            .to_string_lossy()
+        match Path::new(&matches.free[0]).parent() {
+            Some(c) => c,
+            None => Path::new("/"),
+        }
+        .to_string_lossy()
     } else {
         eprintln!("{}", usage);
         process::exit(1)

@@ -1,8 +1,9 @@
 #![warn(clippy::all, clippy::pedantic)]
-use clap::{crate_version, App, Arg};
 use base64::{decode, encode};
+use clap::{crate_version, App, Arg};
 use std::fs;
 use std::io::{self, Read};
+use std::process;
 
 fn decode_base64(mut contents: String, ignore: bool) {
     if ignore {
@@ -10,8 +11,21 @@ fn decode_base64(mut contents: String, ignore: bool) {
     } else {
         contents = contents.replace('\n', "");
     }
-    let decoded = &decode(&contents).unwrap();
-    let output = String::from_utf8(decoded.to_vec()).unwrap();
+    let decoded = match decode(&contents) {
+        Ok(c) => c,
+        Err(e) => {
+            eprintln!("base64: {}", e);
+            process::exit(1);
+        }
+    }
+    .to_vec();
+    let output = match String::from_utf8(decoded) {
+        Ok(c) => c,
+        Err(e) => {
+            eprintln!("base64: {}", e);
+            process::exit(1);
+        }
+    };
     println!("{}", output.trim_end());
 }
 
@@ -30,9 +44,21 @@ fn encode_base64(contents: &str, wrap: usize) {
 fn get_contents(file: &str) -> String {
     let mut contents = String::new();
     if file == "-" {
-        io::stdin().read_to_string(&mut contents).unwrap();
+        match io::stdin().read_to_string(&mut contents) {
+            Ok(c) => c,
+            Err(e) => {
+                eprintln!("base64: {}", e);
+                process::exit(1);
+            }
+        };
     } else {
-        contents = fs::read_to_string(&file).unwrap();
+        contents = match fs::read_to_string(&file) {
+            Ok(c) => c,
+            Err(e) => {
+                eprintln!("base64: {}", e);
+                process::exit(1);
+            }
+        };
     }
     contents
 }
@@ -80,10 +106,9 @@ fn main() {
                 .long("quiet"),
         )
         .get_matches();
-    let files: Vec<_> = if matches.is_present("INPUT") {
-        matches.values_of("INPUT").unwrap().collect()
-    } else {
-        vec!["-"]
+    let files: Vec<_> = match matches.values_of("INPUT") {
+        Some(c) => c.collect(),
+        None => vec!["-"],
     };
     let len = files.len();
     for (index, file) in files.into_iter().enumerate() {
@@ -99,7 +124,16 @@ fn main() {
         if matches.is_present("DECODE") {
             decode_base64(contents, matches.is_present("IGNORE"));
         } else {
-            encode_base64(&contents, matches.value_of_t("WRAP").unwrap());
+            encode_base64(
+                &contents,
+                match matches.value_of_t("WRAP") {
+                    Ok(c) => c,
+                    Err(e) => {
+                        eprintln!("base64: {}", e);
+                        process::exit(1);
+                    }
+                },
+            );
         }
     }
 }

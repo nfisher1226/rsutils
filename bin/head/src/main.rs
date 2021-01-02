@@ -2,16 +2,26 @@
 use clap::{crate_version, App, Arg};
 use std::fs;
 use std::io::{stdin, Read};
+use std::process;
 
 fn head(file: &str, count: usize, header: bool, bytes: bool) {
     let mut contents = String::new();
     if file == "-" {
-        stdin().read_to_string(&mut contents).unwrap();
+        match stdin().read_to_string(&mut contents) {
+            Ok(_) => true,
+            Err(e) => {
+                eprintln!("head: {}", e);
+                process::exit(1);
+            }
+        };
     } else {
         let buf = fs::read_to_string(file);
         contents = match buf {
             Ok(c) => c,
-            Err(m) => panic!("Error opening file: {:?}", m),
+            Err(e) => {
+                eprintln!("head: {}", e);
+                process::exit(1);
+            }
         };
     }
     if header {
@@ -76,16 +86,27 @@ fn main() {
     		)
         .get_matches();
 
-    let files: Vec<_> = if matches.is_present("FILES") {
-        matches.values_of("FILES").unwrap().collect()
-    } else {
-        vec!["-"]
+    let files: Vec<_> = match matches.values_of("FILES") {
+        Some(c) => c.collect(),
+        None => vec!["-"],
     };
-    let header: bool = !matches.is_present("QUIET") && { files.len() > 1 || matches.is_present("HEADER") };
+    let header: bool =
+        !matches.is_present("QUIET") && { files.len() > 1 || matches.is_present("HEADER") };
     for (index, file) in files.into_iter().enumerate() {
         if index == 1 && header {
             println!();
         }
-        head(file, matches.value_of_t("LINES").unwrap(), header, matches.is_present("BYTES"));
+        head(
+            file,
+            match matches.value_of_t("LINES") {
+                Ok(c) => c,
+                Err(e) => {
+                    eprintln!("head: {}", e);
+                    process::exit(1);
+                }
+            },
+            header,
+            matches.is_present("BYTES"),
+        );
     }
 }

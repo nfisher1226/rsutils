@@ -2,6 +2,7 @@
 use std::env;
 use std::fs::File;
 use std::io::{stdin, BufRead, BufReader};
+use std::process;
 
 fn rev_file(file: &str) {
     if file == "-" {
@@ -9,7 +10,13 @@ fn rev_file(file: &str) {
             println!("{}", line.unwrap().trim().chars().rev().collect::<String>());
         }
     } else {
-        let buf = File::open(file).unwrap();
+        let buf = match File::open(file) {
+            Ok(c) => c,
+            Err(e) => {
+                eprintln!("rev: {}", e);
+                process::exit(1);
+            }
+        };
         let buf = BufReader::new(buf);
         for line in buf.lines() {
             println!("{}", line.unwrap().chars().rev().collect::<String>());

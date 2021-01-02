@@ -3,6 +3,7 @@ use clap::{crate_version, App, Arg};
 use data_encoding::BASE32;
 use std::fs;
 use std::io::{self, Read};
+use std::process;
 
 fn decode_base32(mut contents: String, ignore: bool) {
     if ignore {
@@ -10,8 +11,20 @@ fn decode_base32(mut contents: String, ignore: bool) {
     } else {
         contents = contents.replace('\n', "");
     }
-    let decoded = BASE32.decode(&contents.as_bytes()).unwrap();
-    let output = String::from_utf8(decoded).unwrap();
+    let decoded = match BASE32.decode(&contents.as_bytes()) {
+        Ok(c) => c,
+        Err(e) => {
+            eprintln!("base32: {}", e);
+            process::exit(1);
+        }
+    };
+    let output = match String::from_utf8(decoded) {
+        Ok(c) => c,
+        Err(e) => {
+            eprintln!("base32: {}", e);
+            process::exit(1);
+        }
+    };
     println!("{}", output.trim_end());
 }
 
@@ -31,9 +44,21 @@ fn encode_base32(contents: &str, wrap: usize) {
 fn get_contents(file: &str) -> String {
     let mut contents = String::new();
     if file == "-" {
-        io::stdin().read_to_string(&mut contents).unwrap();
+        match io::stdin().read_to_string(&mut contents) {
+            Ok(_) => true,
+            Err(e) => {
+                eprintln!("base32: {}", e);
+                process::exit(1);
+            }
+        };
     } else {
-        contents = fs::read_to_string(&file).unwrap();
+        contents = match fs::read_to_string(&file) {
+            Ok(c) => c,
+            Err(e) => {
+                eprintln!("base32: {}", e);
+                process::exit(1);
+            }
+        };
     }
     contents
 }
@@ -81,10 +106,9 @@ fn main() {
                 .long("quiet"),
         )
         .get_matches();
-    let files: Vec<_> = if matches.is_present("INPUT") {
-        matches.values_of("INPUT").unwrap().collect()
-    } else {
-        vec!["-"]
+    let files: Vec<_> = match matches.values_of("INPUT") {
+        Some(c) => c.collect(),
+        None => vec!["-"],
     };
     let len = files.len();
     for (index, file) in files.into_iter().enumerate() {
@@ -100,7 +124,16 @@ fn main() {
         if matches.is_present("DECODE") {
             decode_base32(contents, matches.is_present("IGNORE"));
         } else {
-            encode_base32(&contents, matches.value_of_t("WRAP").unwrap());
+            encode_base32(
+                &contents,
+                match matches.value_of_t("WRAP") {
+                    Ok(c) => c,
+                    Err(e) => {
+                        eprintln!("base32: {}", e);
+                        process::exit(1);
+                    }
+                },
+            );
         }
     }
 }

@@ -19,18 +19,26 @@ fn main() -> io::Result<()> {
         )
         .get_matches();
     if matches.is_present("NAME") {
-        let result = hostname::set(matches.value_of("NAME").unwrap().to_string());
-        match result {
-            Ok(c) => c,
-            Err(m) => {
-                eprintln!("Error: sethostname: {}", m);
+        hostname::set(match matches.value_of("NAME") {
+            Some(c) => c.to_string(),
+            None => {
+                eprintln!("hostname: missing operand");
                 process::exit(1);
             }
-        };
+        })?;
     } else {
         let hostname = hostname::get()?;
         if matches.is_present("STRIP") {
-            println!("{}", hostname.to_string_lossy().split('.').next().unwrap());
+            println!(
+                "{}",
+                match hostname.to_string_lossy().split('.').next() {
+                    Some(c) => c,
+                    None => {
+                        eprintln!("hostname: missing operand");
+                        process::exit(1);
+                    }
+                }
+            );
         } else {
             println!("{}", hostname.to_string_lossy());
         }

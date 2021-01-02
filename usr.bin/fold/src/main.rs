@@ -12,7 +12,7 @@ fn wrap_line(line: &str, args: &ArgMatches) {
         Err(e) => {
             eprintln!("{}", e);
             process::exit(1);
-        },
+        }
     };
     if args.is_present("WORDS") {
         let line = line.replace('\t', "    ");
@@ -39,13 +39,16 @@ fn wrap_line(line: &str, args: &ArgMatches) {
 
 fn wrap_stdin(args: &ArgMatches) {
     for line in io::stdin().lock().lines() {
-        wrap_line(&match line {
-            Ok(c) => c,
-            Err(e) => {
-                eprintln!("{}", e);
-                process::exit(1);
+        wrap_line(
+            &match line {
+                Ok(c) => c,
+                Err(e) => {
+                    eprintln!("{}", e);
+                    process::exit(1);
+                }
             },
-        }, &args);
+            &args,
+        );
     }
 }
 
@@ -57,17 +60,20 @@ fn wrap_file(file: &str, args: &ArgMatches) {
     };
     let buf = BufReader::new(buf);
     for line in buf.lines() {
-        wrap_line(&match line {
-            Ok(c) => c,
-            Err(e) => {
-                eprintln!("{}", e);
-                process::exit(1);
+        wrap_line(
+            &match line {
+                Ok(c) => c,
+                Err(e) => {
+                    eprintln!("{}", e);
+                    process::exit(1);
+                }
             },
-        }, &args);
+            &args,
+        );
     }
 }
 
-fn main() -> io::Result<()> {
+fn main() {
     let matches = App::new("fold")
         .version(crate_version!())
         .author("The JeanG3nie <jeang3nie@hitchhiker-linux.org>")
@@ -98,10 +104,9 @@ fn main() -> io::Result<()> {
                 .takes_value(true),
         )
         .get_matches();
-    let files: Vec<_> = if matches.is_present("INPUT") {
-        matches.values_of("INPUT").unwrap().collect()
-    } else {
-        vec!["-"]
+    let files: Vec<_> = match matches.values_of("INPUT") {
+        Some(c) => c.collect(),
+        None => vec!["-"],
     };
     for file in files {
         if file == "-" {
@@ -113,5 +118,4 @@ fn main() -> io::Result<()> {
             println!();
         }
     }
-    Ok(())
 }

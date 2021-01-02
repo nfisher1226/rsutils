@@ -1,7 +1,7 @@
 #![warn(clippy::all, clippy::pedantic)]
 use clap::{crate_version, App, Arg, ArgMatches};
-use std::fs;
 use std::io::{stdin, Read};
+use std::{fs, process};
 
 struct Values {
     name: String,
@@ -22,7 +22,10 @@ impl Values {
                 'm' => line = format!("{}\t{}", line, self.chars),
                 'c' => line = format!("{}\t{}", line, self.bytes),
                 'L' => line = format!("{}\t{}", line, self.max),
-                _ => panic!("Illegal input"),
+                _ => {
+                    eprintln!("Illegal input");
+                    process::exit(1);
+                }
             }
         }
         if self.name != "-" {
@@ -62,10 +65,12 @@ fn get_values(file: &str, totals: &mut Values, flags: &[char]) {
     if file == "-" {
         stdin().read_to_string(&mut contents).unwrap();
     } else {
-        let buf = fs::read_to_string(file);
-        contents = match buf {
+        contents = match fs::read_to_string(file) {
             Ok(c) => c,
-            Err(m) => panic!("Error opening file: {:?}", m),
+            Err(e) => {
+                eprintln!("wc: {}", e);
+                process::exit(1);
+            }
         };
     }
     let mut f = Values {
@@ -152,10 +157,9 @@ fn main() {
         )
         .get_matches();
     let flags = get_flags(&matches);
-    let files: Vec<_> = if matches.is_present("INPUT") {
-        matches.values_of("INPUT").unwrap().collect()
-    } else {
-        vec!["-"]
+    let files: Vec<_> = match matches.values_of("INPUT") {
+        Some(c) => c.collect(),
+        None => vec!["-"],
     };
     let mut totals = Values {
         name: "Total".to_string(),
