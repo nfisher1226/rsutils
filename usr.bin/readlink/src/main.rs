@@ -1,10 +1,10 @@
 #![warn(clippy::all, clippy::pedantic)]
-use clap::{crate_version, App, Arg, ArgMatches};
+use clap::{Arg, ArgMatches, Command};
 use std::path::PathBuf;
 use std::{fs, process};
 
 fn printpath(path: PathBuf, newline: bool) {
-    print!("{}", path.into_os_string().into_string().unwrap());
+    print!("{}", path.display());
     if newline {
         println!();
     }
@@ -47,24 +47,24 @@ fn getpath(args: &ArgMatches) {
 }
 
 fn main() {
-    let matches = App::new("readlink")
-        .version(crate_version!())
+    let matches = Command::new("readlink")
+        .version(env!("CARGO_PKG_VERSION"))
         .author("The JeanG3nie <jeang3nie@hitchhiker-linux.org>")
         .about("Print symbolic link target or canonical file name")
         .arg(
             Arg::new("PATH")
-                .about("The path to be examined")
-                .multiple(true),
+                .help("The path to be examined")
+                .multiple_occurrences(true),
         )
         .arg(
             Arg::new("CANON")
-                .about("Canonicalize path")
+                .help("Canonicalize path")
                 .short('f')
                 .long("canonicalize"),
         )
         .arg(
             Arg::new("LF")
-                .about("Do not print the terminating newline.")
+                .help("Do not print the terminating newline.")
                 .short('n')
                 .long("no-newline"),
         )

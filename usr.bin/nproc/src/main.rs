@@ -1,14 +1,14 @@
 #![warn(clippy::all, clippy::pedantic)]
-use clap::{crate_version, App, Arg};
+use clap::{Arg, Command};
 
 fn main() {
-    let matches = App::new("nproc")
-        .version(crate_version!())
+    let matches = Command::new("nproc")
+        .version(env!("CARGO_PKG_VERSION"))
         .author("The JeanG3nie <jeang3nie@hitchhiker-linux.org>")
         .about("Print the number of processing units available")
         .arg(
             Arg::new("ALL")
-                .about("Print the number of installed processors")
+                .help("Print the number of installed processors")
                 .short('a')
                 .long("all"),
         )

@@ -1,19 +1,19 @@
 #![warn(clippy::all, clippy::pedantic)]
-use clap::{crate_version, App, Arg};
+use clap::{Arg, Command};
 use std::{io, process};
 
 fn main() -> io::Result<()> {
-    let matches = App::new("hostname")
-        .version(crate_version!())
+    let matches = Command::new("hostname")
+        .version(env!("CARGO_PKG_VERSION"))
         .author("The JeanG3nie <jeang3nie@hitchhiker-linux.org>")
         .about("Prints the name of the current host. The super-user can set the host name by supplying an argument.")
         .arg(
             Arg::new("NAME")
-                .about("name to set")
+                .help("name to set")
         )
         .arg(
             Arg::new("STRIP")
-                .about("Removes any domain information from the printed name.")
+                .help("Removes any domain information from the printed name.")
                 .short('s')
                 .long("strip"),
         )

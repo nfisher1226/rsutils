@@ -1,8 +1,11 @@
 #![warn(clippy::all, clippy::pedantic)]
-use clap::{crate_version, App, Arg, ArgMatches};
+use clap::{Arg, ArgMatches, Command};
+use std::error::Error;
 use std::io::{stdin, Read};
-use std::{fs, process};
+use std::fmt::Write;
+use std::fs;
 
+#[derive(Default)]
 struct Values {
     name: String,
     lines: usize,
@@ -12,146 +15,137 @@ struct Values {
     max: usize,
 }
 
+#[derive(Clone)]
+enum Flags {
+    Lines,
+    Words,
+    Chars,
+    Bytes,
+    Max,
+}
+
 impl Values {
-    fn print_values(&self, flags: &[char]) {
+    fn print_values(&self, flags: &[Flags]) -> Result<(), Box<dyn Error>> {
         let mut line = String::new();
-        for flag in flags {
+        flags.iter().try_for_each(|flag| {
             match flag {
-                'l' => line = format!("{}\t{}", line, self.lines),
-                'w' => line = format!("{}\t{}", line, self.words),
-                'm' => line = format!("{}\t{}", line, self.chars),
-                'c' => line = format!("{}\t{}", line, self.bytes),
-                'L' => line = format!("{}\t{}", line, self.max),
-                _ => {
-                    eprintln!("Illegal input");
-                    process::exit(1);
-                }
+                Flags::Lines => write!(line,"\t{}", self.lines),
+                Flags::Words => write!(line, "\t{}", self.words),
+                Flags::Chars => write!(line, "\t{}", self.chars),
+                Flags::Bytes => write!(line, "\t{}", self.bytes),
+                Flags::Max => write!(line, "\t{}", self.max),
             }
-        }
+        })?;
         if self.name != "-" {
-            line = format!("{}\t{}", line, self.name);
+            write!(line, "\t{}", self.name).unwrap();
         }
         println!("{}", line);
+        Ok(())
     }
 }
 
-fn get_flags(args: &ArgMatches) -> Vec<char> {
-    let mut flags = Vec::new();
-    if args.is_present("LINES") {
-        flags.push('l');
-    }
-    if args.is_present("WORDS") {
-        flags.push('w');
-    }
-    if args.is_present("CHARS") {
-        flags.push('m');
-    }
-    if args.is_present("BYTES") {
-        flags.push('c');
-    }
-    if args.is_present("MAX") {
-        flags.push('L');
-    }
+fn get_flags(args: &ArgMatches) -> Vec<Flags> {
+    let mut flags: Vec<Flags> = vec![];
+    ["LINES", "WORDS", "CHARS", "BYTES", "MAX"].iter().for_each(|arg| {
+        if args.is_present(arg) {
+            flags.push(match *arg {
+                "LINES" => Flags::Lines,
+                "WORDS" => Flags::Words,
+                "CHARS" => Flags::Chars,
+                "BYTES" => Flags::Bytes,
+                "MAX" => Flags::Max,
+                _ => unreachable!()
+            });
+        }
+    });
     if flags.is_empty() {
-        flags.push('c');
-        flags.push('l');
-        flags.push('w');
+        flags.extend_from_slice(&[Flags::Bytes, Flags::Max, Flags::Words]);
     }
     flags
 }
 
-fn get_values(file: &str, totals: &mut Values, flags: &[char]) {
-    let mut contents = String::new();
-    if file == "-" {
-        stdin().read_to_string(&mut contents).unwrap();
+fn get_values(file: &str, totals: &mut Values, flags: &[Flags]) -> Result<(), Box<dyn Error>> {
+    let contents = if file == "-" {
+        let mut buf = String::new();
+        stdin().read_to_string(&mut buf)?;
+        buf
     } else {
-        contents = match fs::read_to_string(file) {
-            Ok(c) => c,
-            Err(e) => {
-                eprintln!("wc: {}", e);
-                process::exit(1);
-            }
-        };
-    }
+        fs::read_to_string(file)?
+    };
     let mut f = Values {
         name: (*file).to_string(),
-        lines: 0,
-        words: 0,
-        chars: 0,
-        bytes: 0,
-        max: 0,
+        ..Values::default()
     };
     for flag in flags {
         match flag {
-            'l' => {
+            Flags::Lines => {
                 f.lines = contents.lines().count();
                 totals.lines += f.lines;
             }
-            'w' => {
+            Flags::Words => {
                 f.words = contents.split_whitespace().count();
                 totals.words += f.words;
             }
-            'm' => {
+            Flags::Chars => {
                 f.chars = contents.chars().count();
                 totals.chars += f.words;
             }
-            'c' => {
+            Flags::Bytes => {
                 f.bytes = contents.bytes().count();
                 totals.bytes += f.bytes;
             }
-            'L' => {
+            Flags::Max => {
                 f.max = 0;
-                for line in contents.lines() {
+                contents.lines().into_iter().for_each(|line| {
                     let max = line.chars().count();
                     if max > f.max {
                         f.max = max;
                     }
-                }
+                });
                 totals.max += f.max;
             }
-            _ => panic!("Illegal input"),
         };
     }
-    f.print_values(&flags);
+    Ok(f.print_values(&flags)?)
 }
 
 fn main() {
-    let matches = App::new("wc")
-        .version(crate_version!())
+    let matches = Command::new("wc")
+        .version(env!("CARGO_PKG_VERSION"))
         .author("The JeanG3nie <jeang3nie@hitchhiker-linux.org>")
         .about("Print newline, word, and byte counts for each file")
         .arg(
             Arg::new("INPUT")
-                .about("The input file to use")
-                .multiple(true),
+                .help("The input file to use")
+                .multiple_occurrences(true),
         )
         .arg(
             Arg::new("BYTES")
-                .about("Print the byte counts")
+                .help("Print the byte counts")
                 .short('c')
                 .long("bytes"),
         )
         .arg(
             Arg::new("CHARS")
-                .about("Print the character counts")
+                .help("Print the character counts")
                 .short('m')
                 .long("chars"),
         )
         .arg(
             Arg::new("LINES")
-                .about("Print the line counts")
+                .help("Print the line counts")
                 .short('l')
                 .long("lines"),
         )
         .arg(
             Arg::new("MAX")
-                .about("Print the maximum display width")
+                .help("Print the maximum display width")
                 .short('L')
                 .long("max-line-length"),
         )
         .arg(
             Arg::new("WORDS")
-                .about("Print the word counts")
+                .help("Print the word counts")
                 .short('w')
                 .long("words"),
         )
@@ -163,16 +157,16 @@ fn main() {
     };
     let mut totals = Values {
         name: "Total".to_string(),
-        lines: 0,
-        words: 0,
-        chars: 0,
-        bytes: 0,
-        max: 0,
+        ..Values::default()
     };
     for file in &files {
-        get_values(&file, &mut totals, &flags);
+        if let Err(e) = get_values(&file, &mut totals, &flags) {
+            panic!("Error: {}", e);
+        }
     }
     if files.len() > 1 {
-        totals.print_values(&flags);
+        if let Err(e) = totals.print_values(&flags) {
+            panic!("Error: {}", e);
+        }
     }
 }

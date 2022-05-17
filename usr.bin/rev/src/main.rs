@@ -1,14 +1,12 @@
 #![warn(clippy::all, clippy::pedantic)]
-use std::env;
+use std::{env, io};
 use std::fs::File;
-use std::io::{stdin, BufRead, BufReader};
+use std::io::{BufRead, BufReader};
 use std::process;
 
 fn rev_file(file: &str) {
-    if file == "-" {
-        for line in stdin().lock().lines() {
-            println!("{}", line.unwrap().trim().chars().rev().collect::<String>());
-        }
+    let reader: Box<dyn BufRead> = if file == "-" {
+        Box::new(BufReader::new(io::stdin()))
     } else {
         let buf = match File::open(file) {
             Ok(c) => c,
@@ -17,10 +15,10 @@ fn rev_file(file: &str) {
                 process::exit(1);
             }
         };
-        let buf = BufReader::new(buf);
-        for line in buf.lines() {
-            println!("{}", line.unwrap().chars().rev().collect::<String>());
-        }
+        Box::new(BufReader::new(buf))
+    };
+    for line in reader.lines() {
+        println!("{}", line.unwrap().chars().rev().collect::<String>());
     }
 }
 
@@ -29,7 +27,7 @@ fn main() {
     if args.len() < 2 {
         args.push("-".to_string())
     }
-    for file in args.into_iter().skip(1) {
+    args.into_iter().skip(1).for_each(|file| {
         rev_file(&file);
-    }
+    });
 }

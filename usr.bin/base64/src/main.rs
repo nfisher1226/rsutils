@@ -1,6 +1,6 @@
 #![warn(clippy::all, clippy::pedantic)]
 use base64::{decode, encode};
-use clap::{crate_version, App, Arg};
+use clap::{Arg, Command};
 use std::fs;
 use std::io::{self, Read};
 use std::process;
@@ -64,30 +64,30 @@ fn get_contents(file: &str) -> String {
 }
 
 fn main() {
-    let matches = App::new("base64")
-        .version(crate_version!())
+    let matches = Command::new("base64")
+        .version(env!("CARGO_PKG_VERSION"))
         .author("The JeanG3nie <jeang3nie@hitchhiker-linux.org>")
         .about("Base64 encode/decode data and print to standard output")
         .arg(
             Arg::new("INPUT")
-                .about("The input file to use")
-                .multiple(true),
+                .help("The input file to use")
+                .multiple_occurrences(true),
         )
         .arg(
             Arg::new("DECODE")
-                .about("Decode rather than encode")
+                .help("Decode rather than encode")
                 .short('d')
                 .long("decode"),
         )
         .arg(
             Arg::new("IGNORE")
-                .about("Ignore whitespace when decoding")
+                .help("Ignore whitespace when decoding")
                 .short('i')
                 .long("ignore-space"),
         )
         .arg(
             Arg::new("WRAP")
-                .about("Wrap encoded lines after n characters")
+                .help("Wrap encoded lines after n characters")
                 .short('w')
                 .long("wrap")
                 .default_value("76")
@@ -95,13 +95,13 @@ fn main() {
         )
         .arg(
             Arg::new("VERBOSE")
-                .about("Display a header naming each file")
+                .help("Display a header naming each file")
                 .short('v')
                 .long("verbose"),
         )
         .arg(
             Arg::new("QUIET")
-                .about("Do not display header, even with multiple files")
+                .help("Do not display header, even with multiple files")
                 .short('q')
                 .long("quiet"),
         )

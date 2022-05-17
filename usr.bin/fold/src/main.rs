@@ -1,5 +1,5 @@
 #![warn(clippy::all, clippy::pedantic)]
-use clap::{crate_version, App, Arg, ArgMatches};
+use clap::{Arg, ArgMatches, Command};
 use std::fs::File;
 use std::io::prelude::*;
 use std::io::{self, BufReader};
@@ -74,30 +74,30 @@ fn wrap_file(file: &str, args: &ArgMatches) {
 }
 
 fn main() {
-    let matches = App::new("fold")
-        .version(crate_version!())
+    let matches = Command::new("fold")
+        .version(env!("CARGO_PKG_VERSION"))
         .author("The JeanG3nie <jeang3nie@hitchhiker-linux.org>")
         .about("Wrap each input line to fit in specified width")
         .arg(
             Arg::new("INPUT")
-                .about("The input file to use")
-                .multiple(true),
+                .help("The input file to use")
+                .multiple_occurrences(true),
         )
         .arg(
             Arg::new("BYTES")
-                .about("Count bytes rather than columns")
+                .help("Count bytes rather than columns")
                 .short('b')
                 .long("bytes"),
         )
         .arg(
             Arg::new("WORDS")
-                .about("Break at spaces")
+                .help("Break at spaces")
                 .short('s')
                 .long("spaces"),
         )
         .arg(
             Arg::new("WIDTH")
-                .about("Use width columns")
+                .help("Use width columns")
                 .short('w')
                 .long("width")
                 .default_value("80")

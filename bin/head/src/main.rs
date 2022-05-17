@@ -1,5 +1,5 @@
 #![warn(clippy::all, clippy::pedantic)]
-use clap::{crate_version, App, Arg};
+use clap::{Arg, Command};
 use std::fs;
 use std::io::{stdin, Read};
 use std::process;
@@ -49,36 +49,36 @@ fn head(file: &str, count: usize, header: bool, bytes: bool) {
 }
 
 fn main() {
-    let matches = App::new("head")
-        .version(crate_version!())
+    let matches = Command::new("head")
+        .version(env!("CARGO_PKG_VERSION"))
         .author("The JeanG3nie <jeang3nie@hitchhiker-linux.org>")
         .about("Display first lines of a file")
         .arg(
             Arg::new("FILES")
-                .about("The input file to use")
-                .multiple(true),
+                .help("The input file to use")
+                .multiple_occurrences(true),
         )
         .arg(
             Arg::new("BYTES")
-                .about("Count bytes instead of lines")
+                .help("Count bytes instead of lines")
                 .short('c')
                 .long("bytes"),
         )
     		.arg(
       			Arg::new("QUIET")
-     				.about("Disable printing a header. Overrides -c")
+     				.help("Disable printing a header. Overrides -c")
     				.short('q')
     				.long("quiet")
     		)
     		.arg(
     		    Arg::new("HEADER")
-    		    .about("Each file is preceded by a header consisting of the string \"==> XXX <==\" where \"XXX\" is the name of the file.")
+    		    .help("Each file is preceded by a header consisting of the string \"==> XXX <==\" where \"XXX\" is the name of the file.")
     		    .short('v')
     		    .long("verbose")
 		    )
         .arg(
       			Arg::new("LINES")
-    				.about("Count n number of lines (or bytes if -c is specified).")
+    				.help("Count n number of lines (or bytes if -c is specified).")
     				.short('n')
     				.long("lines")
     				.default_value("10")
